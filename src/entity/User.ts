@@ -1,10 +1,10 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  Unique,
-  CreateDateColumn,
-  UpdateDateColumn
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    Unique,
+    CreateDateColumn,
+    UpdateDateColumn
 } from "typeorm";
 import { Length, IsNotEmpty } from "class-validator";
 import * as bcrypt from "bcryptjs";
@@ -13,33 +13,33 @@ import * as bcrypt from "bcryptjs";
 @Unique(["username"])
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+    public id: number;
 
   @Column()
   @Length(4, 20)
-  username: string;
+  public username: string;
 
   @Column()
   @Length(4, 100)
-  password: string;
+  public password: string;
 
   @Column()
   @IsNotEmpty()
-  role: string;
+  public role: string;
 
   @Column()
   @CreateDateColumn()
-  createdAt: Date;
+  public createdAt: Date;
 
   @Column()
   @UpdateDateColumn()
-  updatedAt: Date;
+  public updatedAt: Date;
 
-  hashPassword() {
-    this.password = bcrypt.hashSync(this.password, 8);
+  public hashPassword() {
+      this.password = bcrypt.hashSync(this.password, 8);
   }
 
-  checkIfUnencryptedPasswordIsValid(unencryptedPassword: string) {
-    return bcrypt.compareSync(unencryptedPassword, this.password);
+  public checkIfUnencryptedPasswordIsValid(unencryptedPassword: string) {
+      return bcrypt.compareSync(unencryptedPassword, this.password);
   }
 }
