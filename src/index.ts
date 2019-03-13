@@ -23,7 +23,7 @@ createConnection()
         //Set all routes from routes folder
         app.use("/", routes);
 
-        app.listen(3000, () => {
+        app.listen(2667, () => {
             console.log("Server started on port 3000!");
         });
     })

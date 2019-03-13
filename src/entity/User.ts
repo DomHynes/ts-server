@@ -12,8 +12,8 @@ import * as bcrypt from "bcryptjs";
 @Entity()
 @Unique(["username"])
 export class User {
-  @PrimaryGeneratedColumn('uuid')
-    public id: number;
+  @PrimaryGeneratedColumn("uuid")
+    public id: string;
 
   @Column()
   @Length(4, 20)
@@ -23,9 +23,8 @@ export class User {
   @Length(4, 100)
   public password: string;
 
-  @Column()
-  @IsNotEmpty()
-  public role: string;
+  @Column("simple-array")
+  public roles: string[];
 
   @Column()
   @CreateDateColumn()

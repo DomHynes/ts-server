@@ -1,35 +1,48 @@
-
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import { validate } from "class-validator";
 
 import { User } from "../entity/User";
+import AccessControl from "../config/AccessControl";
+import { CustomResponse, JWTPayload } from "../types";
 
-class UserController{
-
+class UserController {
     public static listAll = async (req: Request, res: Response) => {
         //Get users from database
         const userRepository = getRepository(User);
         const users = await userRepository.find({
-            select: ["id", "username", "role"] //We dont want to send the passwords on response
+            select: ["id", "username", "roles"] //We dont want to send the passwords on response
         });
 
         //Send the users object
-        res.send({users});
+        res.send({ users });
     };
 
-    public static getOneById = async (req: Request, res: Response) => {
+    public static getOneById = async (
+        req: Request,
+        res: CustomResponse<JWTPayload>
+    ) => {
         //Get the ID from the url
-        const id: number = req.params.id;
+        const id = req.params.id;
+
+
+        const asdf = AccessControl.can(res.locals.roles)
+            .execute("read")
+            .on("user");
+        console.warn(asdf);
+        if (!asdf.granted) {
+            res.status(401).send();
+            return;
+        }
 
         //Get the user from database
         const userRepository = getRepository(User);
         try {
             const user = await userRepository.findOneOrFail(id, {
-                select: ["id", "username", "role"] //We dont want to send the password on response
+                select: ["id", "username", "roles"] //We dont want to send the password on response
             });
 
-            res.send({user})
+            res.send({ user });
         } catch (error) {
             res.status(404).send("User not found");
         }
@@ -37,11 +50,11 @@ class UserController{
 
     public static newUser = async (req: Request, res: Response) => {
         //Get parameters from the body
-        let { username, password, role } = req.body;
+        let { username, password } = req.body;
         let user = new User();
         user.username = username;
         user.password = password;
-        user.role = role;
+        user.roles = ["USER"];
 
         //Validade if the parameters are ok
         const errors = await validate(user);
@@ -63,7 +76,7 @@ class UserController{
         }
 
         //If all ok, send 201 response
-        res.status(201).send({user})
+        res.status(201).send({ user });
     };
 
     public static editUser = async (req: Request, res: Response) => {
@@ -71,7 +84,7 @@ class UserController{
         const id = req.params.id;
 
         //Get values from the body
-        const { username, role } = req.body;
+        const { username, roles } = req.body;
 
         //Try to find user on database
         const userRepository = getRepository(User);
@@ -86,7 +99,7 @@ class UserController{
 
         //Validate the new values on model
         user.username = username;
-        user.role = role;
+        user.roles = roles;
         const errors = await validate(user);
         if (errors.length > 0) {
             res.status(400).send(errors);
@@ -96,13 +109,12 @@ class UserController{
         //Try to safe, if fails, that means username already in use
         try {
             await userRepository.save(user);
-
         } catch (e) {
             res.status(409).send("username already in use");
             return;
         }
         //After all send a 204 (no content, but accepted) response
-        res.status(201).send({user})
+        res.status(201).send({ user });
     };
 
     public static deleteUser = async (req: Request, res: Response) => {
@@ -121,6 +133,6 @@ class UserController{
         //After all send a 204 (no content, but accepted) response
         res.status(204).send();
     };
-};
+}
 
 export default UserController;

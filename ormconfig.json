@@ -1,23 +1,38 @@
-{
-   "type": "postgres",
-   "host": "localhost",
-   "database": "postgres",
-   "username": "postgres",
-   "password": "postgres",
-   "synchronize": true,
-   "logging": false,
-   "entities": [
-      "src/entity/**/*.ts"
-   ],
-   "migrations": [
-      "src/migration/**/*.ts"
-   ],
-   "subscribers": [
-      "src/subscriber/**/*.ts"
-   ],
-   "cli": {
+[
+  {
+    "name": "default",
+    "type": "postgres",
+    "host": "localhost",
+    "database": "postgres",
+    "username": "postgres",
+    "password": "postgres",
+    "synchronize": true,
+    "logging": false,
+    "entities": ["src/entity/**/*.ts"],
+    "migrations": ["src/migration/**/*.ts"],
+    "subscribers": ["src/subscriber/**/*.ts"],
+    "cli": {
       "entitiesDir": "src/entity",
       "migrationsDir": "src/migration",
       "subscribersDir": "src/subscriber"
-   }
-}
+    }
+  },
+  {
+    "name": "seed",
+    "type": "postgres",
+    "host": "localhost",
+    "database": "postgres",
+    "username": "postgres",
+    "password": "postgres",
+    "synchronize": true,
+    "logging": false,
+    "entities": ["src/entity/**/*.ts"],
+    "migrations": ["src/seeds/**/*.ts"],
+    "subscribers": ["src/subscriber/**/*.ts"],
+    "cli": {
+      "entitiesDir": "src/entity",
+      "migrationsDir": "src/seeds",
+      "subscribersDir": "src/subscriber"
+    }
+  }
+]

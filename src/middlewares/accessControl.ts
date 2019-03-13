@@ -4,11 +4,18 @@ import { getRepository } from "typeorm";
 import { User } from "../entity/User";
 
 import AccessControl from '../config/AccessControl';
+import { CustomResponse, JWTPayload } from "../types";
 
-export const checkRole = (roles: string[]) => {
-    return async (req: Request, res: Response, next: NextFunction) => {
+export const checkRole = (requestedOperations: string[]) => {
+    return async (req: Request, res: CustomResponse<JWTPayload>, next: NextFunction) => {
     //Get the user ID from previous midleware
-        const id = res.locals.jwtPayload.userId;
+
+        await Promise.all(
+            requestedOperations.map(
+                op => AccessControl
+            )
+        )
+        const id = res.locals.userId;
 
         //Get user role from the database
         const userRepository = getRepository(User);

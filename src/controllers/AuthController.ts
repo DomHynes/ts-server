@@ -9,37 +9,35 @@ import config from "../config/config";
 class AuthController {
     public static login = async (req: Request, res: Response) => {
     //Check if username and password are set
-        let { username, password } = req.body;
-        if (!(username && password)) {
+        let { username: reqUsername, password: reqPassword } = req.body;
+        if (!(reqUsername && reqPassword)) {
             res.status(400).send();
         }
 
         //Get user from database
         const userRepository = getRepository(User);
-        let user: User;
+        let user: User
         try {
-            user = await userRepository.findOneOrFail({ where: { username } });
+            user = await userRepository.findOneOrFail({
+                where: { username: reqUsername },
+            });
         } catch (error) {
             res.status(401).send();
         }
 
         //Check if encrypted password match
-        if (!user.checkIfUnencryptedPasswordIsValid(password)) {
+        if (!user.checkIfUnencryptedPasswordIsValid(reqPassword)) {
             res.status(401).send();
             return;
         }
 
+        const { id, username, roles } = user;
+
         //Sing JWT, valid for 1 hour
-        const token = jwt.sign(
-            { userId: user.id, username: user.username },
-            config.jwtSecret,
-            { expiresIn: "1h" }
-        );
+        const token = jwt.sign({ id, username, roles }, config.jwtSecret, { expiresIn: "1h" });
 
         //Send the jwt in the response
-        res
-            .cookie('token', token, { maxAge: 3600000 })
-            .send(token);
+        res.cookie("token", token, { maxAge: 3600000 }).send(token);
     };
 
     public static changePassword = async (req: Request, res: Response) => {
