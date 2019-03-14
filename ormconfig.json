@@ -8,12 +8,12 @@
     "password": "postgres",
     "synchronize": true,
     "logging": false,
-    "entities": ["src/entity/**/*.ts"],
-    "migrations": ["src/migration/**/*.ts"],
+    "entities": ["src/entities/**/*.ts"],
+    "migrations": ["src/migrations/**/*.ts"],
     "subscribers": ["src/subscriber/**/*.ts"],
     "cli": {
-      "entitiesDir": "src/entity",
-      "migrationsDir": "src/migration",
+      "entitiesDir": "src/entities",
+      "migrationsDir": "src/migrations",
       "subscribersDir": "src/subscriber"
     }
   },
@@ -26,11 +26,11 @@
     "password": "postgres",
     "synchronize": true,
     "logging": false,
-    "entities": ["src/entity/**/*.ts"],
+    "entities": ["src/entities/**/*.ts"],
     "migrations": ["src/seeds/**/*.ts"],
     "subscribers": ["src/subscriber/**/*.ts"],
     "cli": {
-      "entitiesDir": "src/entity",
+      "entitiesDir": "src/entities",
       "migrationsDir": "src/seeds",
       "subscribersDir": "src/subscriber"
     }

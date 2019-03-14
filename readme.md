@@ -70,16 +70,16 @@ The ORM we are going to use to manipulate database
 **reflect-metadata**
 allow some annotations features used with TypeORM
 
-**class-validator** 
+**class-validator**
 A validation package that works really well with TypeORM
 
-**sqlite3** 
+**sqlite3**
 We are going to use sqlite as dev database
 
 **ts-node-dev**
 Automatically restarts the server when we change any file
 
-### Installing type check dependencies 
+### Installing type check dependencies
 
 Since we are working with TypeScript, it is a good idea to install @types for our dependencies.
 
@@ -143,9 +143,9 @@ To generate and validate a jwt token we need a secret key. We will be storing it
 
 ### The User entity
 
-The CLI already created a “entity/User.ts” file. But we want to change the fields, add validations and create methods for hash the password. So we need to rewrite this class.
+The CLI already created a “entities/User.ts” file. But we want to change the fields, add validations and create methods for hash the password. So we need to rewrite this class.
 
-**entity/User.ts**
+**entities/User.ts**
 
 <iframe src="https://medium.com/media/985dfa7ced4bd1bce103b2062b1a83e3" frameborder=0></iframe>
 
@@ -176,7 +176,7 @@ The Node.js itself can’t run, natively, .tsfiles. For that reason is important
 "ts-node" — allows node to run .ts projects. Not recommended for production uses.
 "ts-node-dev" — same as above, but allows you restart the node server every time you change a file
 
-To better setup development and production environments, we will modify the script session of the package.json. 
+To better setup development and production environments, we will modify the script session of the package.json.
 
 <iframe src="https://medium.com/media/5c66379601b23108065e13e7a21c0414" frameborder=0></iframe>
 
