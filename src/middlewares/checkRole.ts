@@ -3,8 +3,6 @@ import { getRepository } from "typeorm";
 
 import { User } from "../entities/User";
 
-import AccessControl from '../config/AccessControl';
-
 export const checkRole = (roles: string[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     //Get the user ID from previous midleware

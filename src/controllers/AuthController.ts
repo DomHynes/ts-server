@@ -37,7 +37,7 @@ class AuthController {
     const token = jwt.sign({ id, username, roles }, config.jwtSecret, { expiresIn: "1h" });
 
     //Send the jwt in the response
-    res.cookie("token", token, { maxAge: 3600000 }).send(token);
+    res.cookie("token", token, { maxAge: 3600000 }).json({token});
   };
 
   public static changePassword = async (req: Request, res: Response) => {

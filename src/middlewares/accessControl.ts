@@ -1,21 +1,15 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, NextFunction } from "express";
 import { getRepository } from "typeorm";
 
 import { User } from "../entities/User";
 
-import AccessControl from '../config/AccessControl';
 import { CustomResponse, JWTPayload } from "../types";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const checkRole = (requestedOperations: string[]) => {
   return async (req: Request, res: CustomResponse<JWTPayload>, next: NextFunction) => {
-    //Get the user ID from previous midleware
 
-    await Promise.all(
-      requestedOperations.map(
-        op => AccessControl
-      )
-    )
-    const id = res.locals.userId;
+    const id = res.locals.id;
 
     //Get user role from the database
     const userRepository = getRepository(User);
