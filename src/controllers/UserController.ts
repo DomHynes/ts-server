@@ -80,18 +80,23 @@ class UserController {
     //Get the ID from the url
     const id = req.params.id;
 
-    //Get values from the body
-    const { username, roles } = req.body;
-
     const permission = accesscontrol
       .can(res.locals.roles)
-      .context({ requester: res.locals.id, owner: res.locals.id })
+      .context({ requester: res.locals.id, owner: req.params.id })
       .execute('update')
       .on('user');
 
     if (!permission.granted) {
       res.status(401).send();
+      return;
     }
+
+    console.warn(JSON.stringify(permission, null, 2));
+    console.warn({
+      locals: res.locals,
+      params: req.params,
+      body: req.body,
+    });
 
     //Try to find user on database
     const userRepository = getRepository(User);
@@ -104,9 +109,7 @@ class UserController {
       return;
     }
 
-    //Validate the new values on model
-    user.username = username;
-    user.roles = roles;
+    Object.assign(user, req.body);
     const errors = await validate(user);
     if (errors.length > 0) {
       res.status(400).send(errors);

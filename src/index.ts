@@ -7,6 +7,7 @@ import * as cors from 'cors';
 import * as cookie from 'cookie-parser';
 import routes from './routes';
 import config from './config/config';
+import logger from './lib/logger';
 
 //Connects to the Database -> then starts the express
 createConnection()
@@ -19,6 +20,7 @@ createConnection()
     app.use(helmet());
     app.use(cookie(config.cookieSecret));
     app.use(bodyParser.json());
+    app.use(logger);
 
     //Set all routes from routes folder
     app.use('/', routes);

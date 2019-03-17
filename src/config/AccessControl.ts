@@ -11,7 +11,7 @@ const accesscontrol = new AccessControl({
         resource: 'user',
         action: 'update',
         condition: {
-          Fn: 'TRUE',
+          Fn: 'EQUALS',
           args: {
             requester: '$.owner',
           },

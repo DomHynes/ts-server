@@ -1,14 +1,16 @@
 {
-  "name": "jwt-express-typeorm",
-  "version": "0.0.1",
-  "description": "Awesome project developed with TypeORM.",
+  "name": "ts-server",
+  "version": "0.1.0",
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
     "@types/body-parser": "^1.17.0",
+    "@types/bunyan": "^1.8.6",
     "@types/cors": "^2.8.4",
+    "@types/express-winston": "^3.0.1",
     "@types/helmet": "0.0.42",
     "@types/jsonwebtoken": "^8.3.0",
     "@types/node": "^8.0.29",
+    "@types/winston": "^2.4.4",
     "@typescript-eslint/eslint-plugin": "^1.4.2",
     "@typescript-eslint/parser": "^1.4.2",
     "eslint": "^5.15.1",
@@ -18,25 +20,30 @@
     "husky": "^1.3.1",
     "lint-staged": "^8.1.5",
     "prettier": "^1.16.4",
-    "ts-node": "3.3.0",
+    "ts-node": "^8.0.3",
     "ts-node-dev": "^1.0.0-pre.32",
-    "typescript": "2.5.2"
+    "typescript": "^3.3.3333"
   },
   "dependencies": {
     "accesscontrol": "^2.2.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.1",
+    "bunyan": "^1.8.12",
+    "bunyan-middleware": "^0.8.0",
     "class-validator": "^0.9.1",
     "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",
     "express": "^4.15.4",
+    "express-winston": "^3.1.0",
     "helmet": "^3.15.0",
     "jsonwebtoken": "^8.4.0",
     "pg": "^7.8.2",
     "reflect-metadata": "^0.1.10",
     "role-acl": "^3.3.0",
     "sqlite3": "^4.0.3",
-    "typeorm": "0.2.12"
+    "typedi": "^0.8.0",
+    "typeorm": "0.2.12",
+    "winston": "^3.2.1"
   },
   "scripts": {
     "tsc": "tsc",
