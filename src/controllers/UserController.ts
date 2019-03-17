@@ -1,35 +1,33 @@
-import { Request, Response } from "express";
-import { getRepository } from "typeorm";
-import { validate } from "class-validator";
+import { Request, Response } from 'express';
+import { getRepository } from 'typeorm';
+import { validate } from 'class-validator';
 
-import { User } from "../entities/User";
-import AccessControl from "../config/AccessControl";
-import { CustomResponse, JWTPayload } from "../types";
+import { User } from '../entities/User';
+import accesscontrol from '../config/AccessControl';
+import { CustomResponse, JWTPayload } from '../types';
 
 class UserController {
   public static listAll = async (req: Request, res: Response) => {
     //Get users from database
     const userRepository = getRepository(User);
     const users = await userRepository.find({
-      select: ["id", "username", "roles"] //We dont want to send the passwords on response
+      select: ['id', 'username', 'roles'], //We dont want to send the passwords on response
     });
 
     //Send the users object
     res.send({ users });
   };
 
-  public static getOneById = async (
-    req: Request,
-    res: CustomResponse<JWTPayload>
-  ) => {
+  public static getOneById = async (req: Request, res: CustomResponse<JWTPayload>) => {
     //Get the ID from the url
     const id = req.params.id;
 
-    const asdf = AccessControl.can(res.locals.roles)
-      .execute("read")
-      .on("user");
+    const { granted } = accesscontrol
+      .can(res.locals.roles)
+      .execute('read')
+      .on('user');
 
-    if (!asdf.granted) {
+    if (!granted) {
       res.status(401).send();
       return;
     }
@@ -38,12 +36,12 @@ class UserController {
     const userRepository = getRepository(User);
     try {
       const user = await userRepository.findOneOrFail(id, {
-        select: ["id", "username", "roles"] //We dont want to send the password on response
+        select: ['id', 'username', 'roles'], //We dont want to send the password on response
       });
 
       res.send({ user });
     } catch (error) {
-      res.status(404).send("User not found");
+      res.status(404).send('User not found');
     }
   };
 
@@ -53,7 +51,7 @@ class UserController {
     let user = new User();
     user.username = username;
     user.password = password;
-    user.roles = ["USER"];
+    user.roles = ['USER'];
 
     //Validade if the parameters are ok
     const errors = await validate(user);
@@ -70,7 +68,7 @@ class UserController {
     try {
       await userRepository.save(user);
     } catch (e) {
-      res.status(409).send("username already in use");
+      res.status(409).send('username already in use');
       return;
     }
 
@@ -78,12 +76,22 @@ class UserController {
     res.status(201).send({ user });
   };
 
-  public static editUser = async (req: Request, res: Response) => {
+  public static editUser = async (req: Request, res: CustomResponse<JWTPayload>) => {
     //Get the ID from the url
     const id = req.params.id;
 
     //Get values from the body
     const { username, roles } = req.body;
+
+    const permission = accesscontrol
+      .can(res.locals.roles)
+      .context({ requester: res.locals.id, owner: res.locals.id })
+      .execute('update')
+      .on('user');
+
+    if (!permission.granted) {
+      res.status(401).send();
+    }
 
     //Try to find user on database
     const userRepository = getRepository(User);
@@ -92,7 +100,7 @@ class UserController {
       user = await userRepository.findOneOrFail(id);
     } catch (error) {
       //If not found, send a 404 response
-      res.status(404).send("User not found");
+      res.status(404).send('User not found');
       return;
     }
 
@@ -109,7 +117,7 @@ class UserController {
     try {
       await userRepository.save(user);
     } catch (e) {
-      res.status(409).send("username already in use");
+      res.status(409).send('username already in use');
       return;
     }
     //After all send a 204 (no content, but accepted) response
@@ -124,7 +132,7 @@ class UserController {
     try {
       await userRepository.findOneOrFail(id);
     } catch (error) {
-      res.status(404).send("User not found");
+      res.status(404).send('User not found');
       return;
     }
     userRepository.delete(id);

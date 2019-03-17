@@ -1,10 +1,10 @@
-import { Request, NextFunction } from "express";
-import * as jwt from "jsonwebtoken";
-import config from "../config/config";
-import { JWTPayload, CustomResponse } from "../types";
-import { getRepository } from "typeorm";
-import { User } from "../entities/User";
-import asyncHandler from "./asyncHandler";
+import { Request, NextFunction } from 'express';
+import * as jwt from 'jsonwebtoken';
+import config from '../config/config';
+import { JWTPayload, CustomResponse } from '../types';
+import { getRepository } from 'typeorm';
+import { User } from '../entities/User';
+import asyncHandler from './asyncHandler';
 
 export const checkJwt = asyncHandler(
   async (req: Request, res: CustomResponse<JWTPayload>, next: NextFunction) => {
@@ -17,7 +17,7 @@ export const checkJwt = asyncHandler(
     let token: string;
 
     if (req.headers.authorization) {
-      token = req.headers.authorization.split("Bearer ")[1];
+      token = req.headers.authorization.split('Bearer ')[1];
     }
 
     if (req.cookies.token) {
@@ -30,7 +30,7 @@ export const checkJwt = asyncHandler(
     try {
       payload = jwt.verify(token, config.jwtSecret) as JWTPayload;
     } catch (error) {
-      console.warn({error})
+      console.warn({ error });
       //If token is not valid, respond with 401 (unauthorized)
       res.status(401).send();
       return;
@@ -41,13 +41,13 @@ export const checkJwt = asyncHandler(
 
     const userRepository = getRepository(User);
     const user: User = await userRepository.findOneOrFail(id, {
-      select: ["id", "username", "roles"]
+      select: ['id', 'username', 'roles'],
     });
 
     const newToken = user.createJWT();
 
-    res.setHeader("token", newToken);
+    res.setHeader('token', newToken);
     next();
     return;
-  }
+  },
 );

@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
-import * as jwt from "jsonwebtoken";
-import { getRepository } from "typeorm";
-import { validate } from "class-validator";
+import { Request, Response } from 'express';
+import * as jwt from 'jsonwebtoken';
+import { getRepository } from 'typeorm';
+import { validate } from 'class-validator';
 
-import { User } from "../entities/User";
-import config from "../config/config";
+import { User } from '../entities/User';
+import config from '../config/config';
 
 class AuthController {
   public static login = async (req: Request, res: Response) => {
@@ -16,7 +16,7 @@ class AuthController {
 
     //Get user from database
     const userRepository = getRepository(User);
-    let user: User
+    let user: User;
     try {
       user = await userRepository.findOneOrFail({
         where: { username: reqUsername },
@@ -34,10 +34,12 @@ class AuthController {
     const { id, username, roles } = user;
 
     //Sing JWT, valid for 1 hour
-    const token = jwt.sign({ id, username, roles }, config.jwtSecret, { expiresIn: "1h" });
+    const token = jwt.sign({ id, username, roles }, config.jwtSecret, {
+      expiresIn: '1h',
+    });
 
     //Send the jwt in the response
-    res.cookie("token", token, { maxAge: 3600000 }).json({token});
+    res.cookie('token', token, { maxAge: 3600000 }).json({ token });
   };
 
   public static changePassword = async (req: Request, res: Response) => {

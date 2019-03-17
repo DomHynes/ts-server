@@ -4,17 +4,17 @@ import {
   Column,
   Unique,
   CreateDateColumn,
-  UpdateDateColumn
-} from "typeorm";
-import { Length } from "class-validator";
-import * as bcrypt from "bcryptjs";
-import * as jwt from "jsonwebtoken";
-import config from "../config/config";
+  UpdateDateColumn,
+} from 'typeorm';
+import { Length } from 'class-validator';
+import * as bcrypt from 'bcryptjs';
+import * as jwt from 'jsonwebtoken';
+import config from '../config/config';
 
 @Entity()
-@Unique(["username"])
+@Unique(['username'])
 export class User {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   public id: string;
 
   @Column()
@@ -25,7 +25,7 @@ export class User {
   @Length(4, 100)
   public password: string;
 
-  @Column("simple-array")
+  @Column('simple-array')
   public roles: string[];
 
   @Column()
@@ -46,6 +46,8 @@ export class User {
 
   public createJWT(): string {
     const { id, username, roles } = this;
-    return jwt.sign({id, username, roles}, config.jwtSecret, {expiresIn: '1h'});
+    return jwt.sign({ id, username, roles }, config.jwtSecret, {
+      expiresIn: '1h',
+    });
   }
 }

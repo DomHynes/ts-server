@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from "express";
-import { getRepository } from "typeorm";
+import { Request, Response, NextFunction } from 'express';
+import { getRepository } from 'typeorm';
 
-import { User } from "../entities/User";
+import { User } from '../entities/User';
 
 export const checkRole = (roles: string[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -16,8 +16,6 @@ export const checkRole = (roles: string[]) => {
     } catch (id) {
       res.status(401).send();
     }
-
-
 
     //Check if array of authorized roles includes the user's role
     if (roles.some(role => user.roles.indexOf(role) > -1)) next();
