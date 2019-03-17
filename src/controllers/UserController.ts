@@ -91,13 +91,6 @@ class UserController {
       return;
     }
 
-    console.warn(JSON.stringify(permission, null, 2));
-    console.warn({
-      locals: res.locals,
-      params: req.params,
-      body: req.body,
-    });
-
     //Try to find user on database
     const userRepository = getRepository(User);
     let user;
