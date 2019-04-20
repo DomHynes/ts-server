@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import { getRepository } from 'typeorm';
 
 import { User } from '../entities/User';
 
@@ -9,10 +8,10 @@ export const checkRole = (roles: string[]) => {
     const id = res.locals.jwtPayload.userId;
 
     //Get user role from the database
-    const userRepository = getRepository(User);
+
     let user: User;
     try {
-      user = await userRepository.findOneOrFail(id);
+      user = await User.findOneOrFail(id);
     } catch (id) {
       res.status(401).send();
     }

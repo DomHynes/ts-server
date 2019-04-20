@@ -8,8 +8,9 @@ export class InitialMigration1552435288874 implements MigrationInterface {
     user.password = 'admin';
     user.hashPassword();
     user.roles = ['ADMIN'];
-    const userRepository = queryRunner.connection.getRepository(User);
-    await userRepository.save(user);
+    user.email = 'admin@example.com';
+    const UserRepository = queryRunner.connection.getRepository(User);
+    await UserRepository.save(user);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

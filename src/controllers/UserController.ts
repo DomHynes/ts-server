@@ -1,29 +1,29 @@
 import { Request, Response } from 'express';
-import { getRepository } from 'typeorm';
+
 import { validate } from 'class-validator';
 
 import { User } from '../entities/User';
 import accesscontrol from '../config/AccessControl';
-import { CustomResponse, JWTPayload } from '../types';
+import { CustomResponse, JWTPayload, AuthenticatedRequest } from '../types';
 
 class UserController {
   public static listAll = async (req: Request, res: Response) => {
     //Get users from database
-    const userRepository = getRepository(User);
-    const users = await userRepository.find({
-      select: ['id', 'username', 'roles'], //We dont want to send the passwords on response
+
+    const users = await User.find({
+      select: ['id', 'username', 'email', 'roles'], //We dont want to send the passwords on response
     });
 
     //Send the users object
     res.send({ users });
   };
 
-  public static getOneById = async (req: Request, res: CustomResponse<JWTPayload>) => {
+  public static getOneById = async (req: AuthenticatedRequest, res: CustomResponse<JWTPayload>) => {
     //Get the ID from the url
     const id = req.params.id;
 
     const { granted } = accesscontrol
-      .can(res.locals.roles)
+      .can(req.user.roles)
       .execute('read')
       .on('user');
 
@@ -33,10 +33,10 @@ class UserController {
     }
 
     //Get the user from database
-    const userRepository = getRepository(User);
+
     try {
-      const user = await userRepository.findOneOrFail(id, {
-        select: ['id', 'username', 'roles'], //We dont want to send the password on response
+      const user = await User.findOneOrFail(id, {
+        select: ['id', 'username', 'email', 'roles'], //We dont want to send the password on response
       });
 
       res.send({ user });
@@ -64,9 +64,9 @@ class UserController {
     user.hashPassword();
 
     //Try to save. If fails, the username is already in use
-    const userRepository = getRepository(User);
+
     try {
-      await userRepository.save(user);
+      await User.save(user);
     } catch (e) {
       res.status(409).send('username already in use');
       return;
@@ -92,10 +92,10 @@ class UserController {
     }
 
     //Try to find user on database
-    const userRepository = getRepository(User);
+
     let user;
     try {
-      user = await userRepository.findOneOrFail(id);
+      user = await User.findOneOrFail(id);
     } catch (error) {
       //If not found, send a 404 response
       res.status(404).send('User not found');
@@ -111,7 +111,7 @@ class UserController {
 
     //Try to safe, if fails, that means username already in use
     try {
-      await userRepository.save(user);
+      await User.save(user);
     } catch (e) {
       res.status(409).send('username already in use');
       return;
@@ -124,14 +124,13 @@ class UserController {
     //Get the ID from the url
     const id = req.params.id;
 
-    const userRepository = getRepository(User);
     try {
-      await userRepository.findOneOrFail(id);
+      await User.findOneOrFail(id);
     } catch (error) {
       res.status(404).send('User not found');
       return;
     }
-    userRepository.delete(id);
+    User.delete(id);
 
     //After all send a 204 (no content, but accepted) response
     res.status(204).send();

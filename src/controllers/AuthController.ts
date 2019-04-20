@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
-import { getRepository } from 'typeorm';
+
 import { validate } from 'class-validator';
 
 import { User } from '../entities/User';
@@ -15,10 +15,10 @@ class AuthController {
     }
 
     //Get user from database
-    const userRepository = getRepository(User);
+
     let user: User;
     try {
-      user = await userRepository.findOneOrFail({
+      user = await User.findOneOrFail({
         where: { username: reqUsername },
       });
     } catch (error) {
@@ -26,7 +26,7 @@ class AuthController {
     }
 
     //Check if encrypted password match
-    if (!user.checkIfUnencryptedPasswordIsValid(reqPassword)) {
+    if (!user || !user.checkIfUnencryptedPasswordIsValid(reqPassword)) {
       res.status(401).send();
       return;
     }
@@ -39,7 +39,11 @@ class AuthController {
     });
 
     //Send the jwt in the response
-    res.cookie('token', token, { maxAge: 3600000 }).json({ token });
+    res
+      .cookie('jwt', token, {
+        maxAge: 3600000,
+      })
+      .json({ token });
   };
 
   public static changePassword = async (req: Request, res: Response) => {
@@ -53,10 +57,10 @@ class AuthController {
     }
 
     //Get user from the database
-    const userRepository = getRepository(User);
+
     let user: User;
     try {
-      user = await userRepository.findOneOrFail(id);
+      user = await User.findOneOrFail(id);
     } catch (id) {
       res.status(401).send();
     }
@@ -76,7 +80,7 @@ class AuthController {
     }
     //Hash the new password and save
     user.hashPassword();
-    userRepository.save(user);
+    User.save(user);
 
     res.status(204).send();
   };

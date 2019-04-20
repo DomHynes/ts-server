@@ -2,7 +2,7 @@ import { Request, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
 import config from '../config/config';
 import { JWTPayload, CustomResponse } from '../types';
-import { getRepository } from 'typeorm';
+
 import { User } from '../entities/User';
 import asyncHandler from './asyncHandler';
 
@@ -36,13 +36,11 @@ export const checkJwt = asyncHandler(
       return;
     }
 
-    res.locals = payload;
-    const { id } = payload;
-
-    const userRepository = getRepository(User);
-    const user: User = await userRepository.findOneOrFail(id, {
+    const user: User = await User.findOneOrFail(payload.id, {
       select: ['id', 'username', 'roles'],
     });
+
+    res.locals = user;
 
     const newToken = user.createJWT();
 

@@ -7,7 +7,7 @@
     "username": "postgres",
     "password": "postgres",
     "synchronize": true,
-    "logging": false,
+    "logging": "error",
     "entities": ["src/entities/**/*.ts"],
     "migrations": ["src/migrations/**/*.ts"],
     "subscribers": ["src/subscriber/**/*.ts"],

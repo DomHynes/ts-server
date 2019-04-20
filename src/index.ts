@@ -1,31 +1,33 @@
+import * as bodyParser from 'body-parser';
+import * as cookieParser from 'cookie-parser';
+import * as cors from 'cors';
+import * as express from 'express';
+import * as helmet from 'helmet';
 import 'reflect-metadata';
 import { createConnection } from 'typeorm';
-import * as express from 'express';
-import * as bodyParser from 'body-parser';
-import * as helmet from 'helmet';
-import * as cors from 'cors';
-import * as cookie from 'cookie-parser';
-import routes from './routes';
 import config from './config/config';
+import { bootBot } from './lib/bots';
 import logger from './lib/logger';
+import routes from './routes';
+import passport = require('passport');
 
-//Connects to the Database -> then starts the express
 createConnection()
   .then(async () => {
-    // Create a new express application instance
+    bootBot();
     const app = express();
 
-    // Call midlewares
-    app.use(cors());
+    // Call middlewares
+    app.use(cors({ credentials: true, origin: 'http://multibot.lol:3000' }));
+    app.use(cookieParser(config.cookieSecret));
+    app.use(passport.initialize());
     app.use(helmet());
-    app.use(cookie(config.cookieSecret));
     app.use(bodyParser.json());
     app.use(logger);
 
     //Set all routes from routes folder
     app.use('/', routes);
 
-    app.listen(2667, () => {
+    app.listen(80, () => {
       console.log('Server started on port 3000!');
     });
   })

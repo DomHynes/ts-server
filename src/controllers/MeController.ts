@@ -1,19 +1,29 @@
-import { Request } from 'express';
-import { CustomResponse, JWTPayload } from '../types';
-import { getRepository } from 'typeorm';
 import { User } from '../entities/User';
+import { AuthenticatedRequest, CustomResponse, JWTPayload } from '../types';
 
 class MeController {
-  public static details = async (req: Request, res: CustomResponse<JWTPayload>) => {
-    const UserRepository = getRepository(User);
-
+  public static details = async (req: AuthenticatedRequest, res: CustomResponse<JWTPayload>) => {
     let user: User;
     try {
-      user = await UserRepository.findOneOrFail(res.locals.id, {
-        select: ['id', 'username', 'roles'], //We dont want
-      });
+      user = await User.findOneOrFail(
+        { id: req.user.id },
+        {
+          relations: ['integrations'],
+          select: {
+            id: true,
+            username: true,
+            roles: true,
+            integrations: {
+              id: true,
+              avatar: true,
+              username: true,
+              service: true,
+            },
+          },
+        },
+      );
     } catch (e) {
-      res.status(401).send();
+      return res.status(401).send();
     }
 
     res.json({
